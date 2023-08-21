@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:instagram_flutter/resources/auth_methods.dart';
 import 'package:instagram_flutter/utils/colors.dart';
+import 'package:instagram_flutter/utils/utils.dart';
 import 'package:instagram_flutter/widgets/text_fiels_input.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
 
   @override
   void dispose() {
@@ -22,6 +28,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordController.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+  }
+
+  void selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
   }
 
   @override
@@ -41,14 +54,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 color: primaryColor,
                 height: 64,
               ),
+
               const SizedBox(height: 64),
+
+              Stack(
+                children: [
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 64,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : const CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(
+                            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
+                          ),
+                        ),
+                  Positioned(
+                    bottom: -10,
+                    left: 80,
+                    child: IconButton(
+                      onPressed: selectImage,
+                      icon: const Icon(
+                        Icons.add_a_photo,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
               // text field input username
               TextFieldInput(
                 hintText: 'ユーザー名',
                 textInputType: TextInputType.text,
                 textEditingController: _usernameController,
               ),
-              const SizedBox(height: 64),
+              const SizedBox(height: 24),
               // text field input email
               TextFieldInput(
                 hintText: 'Eメールアドレス',
@@ -63,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 textEditingController: _passwordController,
                 isPass: true,
               ),
-              const SizedBox(height: 64),
+              const SizedBox(height: 24),
               // text field input username
               TextFieldInput(
                 hintText: 'プロフィール',
@@ -74,24 +116,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 24),
               // button login
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  String res = await AuthMethods().signUpUser(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    username: _usernameController.text,
+                    bio: _bioController.text,
+                  );
+
+                  print(res);
+                },
                 child: Container(
                   child: const Text('新規作成'),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(4),
-                        ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(4),
                       ),
-                      color: blueColor),
+                    ),
+                    color: blueColor,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 12),
-              Flexible(child: Container(), flex: 2),
+              Flexible(
+                child: Container(),
+                flex: 2,
+              ),
               // button Sign up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
