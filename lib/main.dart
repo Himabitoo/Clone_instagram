@@ -27,16 +27,17 @@ void main() async {
     );
   } else {
     // when Native
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: FirebaseConfig.Native_apiKey,
-        appId: FirebaseConfig.Native_appId,
-        projectId: FirebaseConfig.Native_projectId,
-        messagingSenderId: FirebaseConfig.Native_messagingSenderId,
-        authDomain: FirebaseConfig.Native_authDomain,
-        storageBucket: FirebaseConfig.Native_storageBucket,
-      ),
-    );
+    await Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //   options: const FirebaseOptions(
+    //     apiKey: FirebaseConfig.Native_apiKey,
+    //     appId: FirebaseConfig.Native_appId,
+    //     projectId: FirebaseConfig.Native_projectId,
+    //     messagingSenderId: FirebaseConfig.Native_messagingSenderId,
+    //     authDomain: FirebaseConfig.Native_authDomain,
+    //     storageBucket: FirebaseConfig.Native_storageBucket,
+    //   ),
+    // );
   }
   runApp(const MyApp());
 }
